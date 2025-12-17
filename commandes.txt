@@ -1,0 +1,44 @@
+add course Science de données | Cours SDN | Data Science
+add pdf science_de_données courses/Science_Data/Cours-SDN-Partie-1.pdf Partie 1
+add pdf science_de_données courses/Science_Data/Cours-SDN-Partie-2.pdf Partie 2
+add pdf science_de_données courses/Science_Data/Cours-SDN-Partie-3.pdf Partie 3
+add pdf science_de_données courses/Science_Data/Cours-SDN-Partie-4.pdf Partie 4
+add pdf science_de_données courses/Science_Data/Cours-SDN-Partie-5.pdf Partie 5
+add url science_de_données https://www.youtube.com/watch?v=aircAruvnKk "Comprendre les Réseaux de Neurones (3Blue1Brown)"
+add url science_de_données https://www.youtube.com/watch?v=zjkBMFhNj_g "Introduction aux Transformers et LLM"
+add url science_de_données https://www.youtube.com/watch?v=7xTH-c92e1k "RAG Explained - Retrieval Augmented Generation"
+add url science_de_données https://www.youtube.com/watch?v=wG6rdUIGEOM "Machine Learning Intro (Machine Learnia)"
+rebuild
+
+
+
+:: api
+
+# Start server
+uvicorn api:app --reload --host 0.0.0.0 --port 8000
+
+# Create course
+curl -X POST "http://localhost:8000/courses" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Data Science", "description": "ML & AI", "category": "Tech"}'
+
+# Add YouTube video
+curl -X POST "http://localhost:8000/courses/data_science/materials/youtube" \
+  -H "Content-Type: application/json" \
+  -d '{"url": "https://youtube.com/watch?v=aircAruvnKk", "title": "Neural Networks"}'
+
+# Upload PDF
+curl -X POST "http://localhost:8000/courses/data_science/materials/upload" \
+  -F "file=@course.pdf" \
+  -F "title=Lecture 1"
+
+# Rebuild database
+curl -X POST "http://localhost:8000/rebuild"
+
+# Query
+curl -X POST "http://localhost:8000/query" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "Explain neural networks", "max_chunks": 10}'
+
+# Get stats
+curl "http://localhost:8000/stats"
