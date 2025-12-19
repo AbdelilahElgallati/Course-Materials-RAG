@@ -246,7 +246,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50">
+    <div className="h-screen flex flex-col bg-gradient-to-br from-indigo-50 via-white to-purple-50 overflow-hidden">
       {/* Notification */}
       {notification && (
         <div className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-xl flex items-center gap-3 animate-slide-in ${
@@ -261,7 +261,7 @@ function App() {
       )}
   
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
+      <header className="bg-white border-b border-gray-200 shadow-sm z-40 flex-shrink-0">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -296,13 +296,13 @@ function App() {
         </div>
       </header>
   
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="flex-1 overflow-hidden max-w-7xl w-full mx-auto px-6 py-4">
+        <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="flex flex-col gap-4 h-full overflow-hidden">
             {/* Stats Card */}
             {stats && (
-              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+              <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex-shrink-0">
                 <div className="flex items-center gap-2 mb-4">
                   <BarChart3 className="w-5 h-5 text-indigo-600" />
                   <h2 className="text-lg font-bold text-gray-900">Statistics</h2>
@@ -325,9 +325,9 @@ function App() {
             )}
   
             {/* Courses List */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Courses</h2>
-              <div className="space-y-2 max-h-96 overflow-y-auto">
+            <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 flex-1 min-h-0 flex flex-col">
+              <h2 className="text-lg font-bold text-gray-900 mb-4 flex-shrink-0">Courses</h2>
+              <div className="space-y-2 flex-1 overflow-y-auto min-h-0">
                 {courses.length === 0 ? (
                   <p className="text-sm text-gray-500 text-center py-8">No courses yet</p>
                 ) : (
@@ -374,7 +374,7 @@ function App() {
             <button
               onClick={rebuildDatabase}
               disabled={loading}
-              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 px-4 rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 flex items-center justify-center gap-2 flex-shrink-0"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <RefreshCw className="w-5 h-5" />}
               Rebuild Database
@@ -382,10 +382,10 @@ function App() {
           </div>
   
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 h-full flex flex-col min-h-0">
             {/* Tabs */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-              <div className="flex border-b border-gray-200">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden flex flex-col h-full">
+              <div className="flex border-b border-gray-200 flex-shrink-0">
                 {['query', 'create', 'upload'].map(tab => (
                   <button
                     key={tab}
@@ -403,11 +403,11 @@ function App() {
                 ))}
               </div>
   
-              <div className="p-6">
+              <div className="flex-1 min-h-0 flex flex-col p-6">
                 
                 {/* --- CHAT INTERFACE (QUERY TAB) --- */}
                 {activeTab === 'query' && (
-                  <div className="flex flex-col h-[600px] bg-white rounded-xl border border-gray-200 shadow-inner overflow-hidden">
+                  <div className="flex flex-col flex-1 min-h-0 bg-white rounded-xl border border-gray-200 shadow-inner overflow-hidden">
                     
                     {/* 1. Chat Header */}
                     <div className="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
@@ -427,9 +427,9 @@ function App() {
                     </div>
   
                     {/* 2. Messages Area */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50/50">
+                    <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-gray-50/50 min-h-0">
                       {chatHistory.length === 0 && (
-                        <div className="h-full flex flex-col items-center justify-center text-gray-400 space-y-4">
+                        <div className="flex flex-col items-center justify-center text-gray-400 space-y-4 min-h-full">
                           <BookOpen className="w-12 h-12 opacity-20" />
                           <p>Select a course and ask a question to get started.</p>
                         </div>
@@ -547,7 +547,7 @@ function App() {
   
                 {/* --- CREATE COURSE TAB --- */}
                 {activeTab === 'create' && (
-                  <div className="space-y-4">
+                  <div className="space-y-4 overflow-y-auto">
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">
                         Course Name *
@@ -608,7 +608,7 @@ function App() {
   
                 {/* --- UPLOAD MATERIALS TAB --- */}
                 {activeTab === 'upload' && (
-                  <div className="space-y-6">
+                  <div className="space-y-6 overflow-y-auto">
                     {!selectedCourse ? (
                       <div className="text-center py-12">
                         <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-3" />
