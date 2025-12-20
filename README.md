@@ -12,81 +12,171 @@ Course Materials RAG transforms static educational content into an interactive, 
 
 The system implements a sophisticated RAG architecture with the following components:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        DOCUMENT INGESTION                        │
-├─────────────────────────────────────────────────────────────────┤
-│  PDF Files  │  Text Files  │  YouTube Videos (Transcripts)      │
-│  (PyPDF)    │  (TextLoader)│  (yt-dlp)                          │
-└─────────────┴──────────────┴────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      DOCUMENT PROCESSING                         │
-├─────────────────────────────────────────────────────────────────┤
-│  • RecursiveCharacterTextSplitter (800 chars, 150 overlap)      │
-│  • Metadata enrichment (course_id, title, type, source)         │
-│  • Chunk deduplication                                          │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      VECTOR EMBEDDING                            │
-├─────────────────────────────────────────────────────────────────┤
-│  Model: paraphrase-multilingual-mpnet-base-v2                   │
-│  • Multilingual support (English, French, etc.)                 │
-│  • 768-dimensional vectors                                      │
-│  • GPU acceleration (CUDA) when available                       │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    VECTOR STORAGE (FAISS)                        │
-├─────────────────────────────────────────────────────────────────┤
-│  • Fast similarity search                                       │
-│  • Course-based filtering                                       │
-│  • Persistent index on disk                                     │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    QUERY PROCESSING                              │
-├─────────────────────────────────────────────────────────────────┤
-│  1. Query Embedding                                             │
-│  2. Hybrid Retrieval:                                           │
-│     • Semantic similarity search (k*2 candidates)               │
-│     • Max Marginal Relevance (MMR) for diversity                │
-│     • Course-aware filtering with fallback                      │
-│  3. Top-k document retrieval                                    │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                  CONTEXT AUGMENTATION                            │
-├─────────────────────────────────────────────────────────────────┤
-│  • Combine top retrieved chunks                                 │
-│  • Format with metadata (titles, sources)                       │
-│  • Build structured context for LLM                             │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│              GENERATION (Groq LLM - Llama 3.3 70B)              │
-├─────────────────────────────────────────────────────────────────┤
-│  • Expert educational assistant prompt                          │
-│  • Context-aware answer generation                              │
-│  • Source citation and references                               │
-│  • Markdown + LaTeX support                                     │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      RESPONSE DELIVERY                           │
-├─────────────────────────────────────────────────────────────────┤
-│  • Formatted answer with sources                                │
-│  • Processing metrics (time, chunks used)                       │
-│  • Interactive chat interface                                   │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph Input["📥 DOCUMENT INGESTION"]
+        PDF["📄 PDF Files<br/><small>PyPDF Loader</small>"]
+        TXT["📝 Text Files<br/><small>TextLoader</small>"]
+        YT["🎥 YouTube Videos<br/><small>yt-dlp Transcripts</small>"]
+    end
+
+    subgraph Processing["⚙️ DOCUMENT PROCESSING"]
+        Split["✂️ Text Splitting<br/><small>RecursiveCharacterTextSplitter<br/>800 chars | 150 overlap</small>"]
+        Meta["🏷️ Metadata Enrichment<br/><small>course_id, title, type, source</small>"]
+        Dedup["🔄 Chunk Deduplication"]
+    end
+
+    subgraph Embedding["🧠 VECTOR EMBEDDING"]
+        Model["🤖 Embedding Model<br/><small>paraphrase-multilingual-mpnet-base-v2</small>"]
+        Features["✨ Features<br/><small>• 768-dimensional vectors<br/>• Multilingual (50+ languages)<br/>• GPU acceleration (CUDA)</small>"]
+    end
+
+    subgraph Storage["💾 VECTOR STORAGE"]
+        FAISS["🗄️ FAISS Index<br/><small>• Fast similarity search<br/>• Course-based filtering<br/>• Persistent on disk</small>"]
+    end
+
+    subgraph Query["🔍 QUERY PROCESSING"]
+        QEmbed["📊 Query Embedding"]
+        Hybrid["🎯 Hybrid Retrieval<br/><small>1. Semantic similarity (k×2)<br/>2. MMR for diversity<br/>3. Course-aware filtering</small>"]
+        TopK["📋 Top-K Selection"]
+    end
+
+    subgraph Context["📚 CONTEXT AUGMENTATION"]
+        Combine["🔗 Combine Chunks"]
+        Format["📝 Format Context<br/><small>Add titles & sources</small>"]
+        Structure["🏗️ Build LLM Input"]
+    end
+
+    subgraph Generation["✨ ANSWER GENERATION"]
+        LLM["🚀 Groq LLM<br/><small>Llama 3.3 70B Versatile</small>"]
+        Prompt["💬 System Prompt<br/><small>Educational assistant context</small>"]
+        Cite["📖 Source Citations<br/><small>Markdown + LaTeX support</small>"]
+    end
+
+    subgraph Response["📤 RESPONSE DELIVERY"]
+        Answer["✅ Formatted Answer"]
+        Metrics["📊 Performance Metrics<br/><small>Processing time, chunks used</small>"]
+        UI["💻 Interactive Chat UI<br/><small>React Frontend</small>"]
+    end
+
+    PDF --> Split
+    TXT --> Split
+    YT --> Split
+    
+    Split --> Meta
+    Meta --> Dedup
+    
+    Dedup --> Model
+    Model --> Features
+    Features --> FAISS
+    
+    FAISS --> QEmbed
+    QEmbed --> Hybrid
+    Hybrid --> TopK
+    
+    TopK --> Combine
+    Combine --> Format
+    Format --> Structure
+    
+    Structure --> Prompt
+    Prompt --> LLM
+    LLM --> Cite
+    
+    Cite --> Answer
+    Answer --> Metrics
+    Metrics --> UI
+
+    style Input fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Processing fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Embedding fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Storage fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style Query fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    style Context fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    style Generation fill:#e0f2f1,stroke:#00897b,stroke-width:2px
+    style Response fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+
+flowchart TB
+    subgraph Input["📥 DOCUMENT INGESTION"]
+        PDF["📄 PDF Files<br/><small>PyPDF Loader</small>"]
+        TXT["📝 Text Files<br/><small>TextLoader</small>"]
+        YT["🎥 YouTube Videos<br/><small>yt-dlp Transcripts</small>"]
+    end
+
+    subgraph Processing["⚙️ DOCUMENT PROCESSING"]
+        Split["✂️ Text Splitting<br/><small>RecursiveCharacterTextSplitter<br/>800 chars | 150 overlap</small>"]
+        Meta["🏷️ Metadata Enrichment<br/><small>course_id, title, type, source</small>"]
+        Dedup["🔄 Chunk Deduplication"]
+    end
+
+    subgraph Embedding["🧠 VECTOR EMBEDDING"]
+        Model["🤖 Embedding Model<br/><small>paraphrase-multilingual-mpnet-base-v2</small>"]
+        Features["✨ Features<br/><small>• 768-dimensional vectors<br/>• Multilingual (50+ languages)<br/>• GPU acceleration (CUDA)</small>"]
+    end
+
+    subgraph Storage["💾 VECTOR STORAGE"]
+        FAISS["🗄️ FAISS Index<br/><small>• Fast similarity search<br/>• Course-based filtering<br/>• Persistent on disk</small>"]
+    end
+
+    subgraph Query["🔍 QUERY PROCESSING"]
+        QEmbed["📊 Query Embedding"]
+        Hybrid["🎯 Hybrid Retrieval<br/><small>1. Semantic similarity (k×2)<br/>2. MMR for diversity<br/>3. Course-aware filtering</small>"]
+        TopK["📋 Top-K Selection"]
+    end
+
+    subgraph Context["📚 CONTEXT AUGMENTATION"]
+        Combine["🔗 Combine Chunks"]
+        Format["📝 Format Context<br/><small>Add titles & sources</small>"]
+        Structure["🏗️ Build LLM Input"]
+    end
+
+    subgraph Generation["✨ ANSWER GENERATION"]
+        LLM["🚀 Groq LLM<br/><small>Llama 3.3 70B Versatile</small>"]
+        Prompt["💬 System Prompt<br/><small>Educational assistant context</small>"]
+        Cite["📖 Source Citations<br/><small>Markdown + LaTeX support</small>"]
+    end
+
+    subgraph Response["📤 RESPONSE DELIVERY"]
+        Answer["✅ Formatted Answer"]
+        Metrics["📊 Performance Metrics<br/><small>Processing time, chunks used</small>"]
+        UI["💻 Interactive Chat UI<br/><small>React Frontend</small>"]
+    end
+
+    PDF --> Split
+    TXT --> Split
+    YT --> Split
+    
+    Split --> Meta
+    Meta --> Dedup
+    
+    Dedup --> Model
+    Model --> Features
+    Features --> FAISS
+    
+    FAISS --> QEmbed
+    QEmbed --> Hybrid
+    Hybrid --> TopK
+    
+    TopK --> Combine
+    Combine --> Format
+    Format --> Structure
+    
+    Structure --> Prompt
+    Prompt --> LLM
+    LLM --> Cite
+    
+    Cite --> Answer
+    Answer --> Metrics
+    Metrics --> UI
+
+    style Input fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style Processing fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Embedding fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style Storage fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style Query fill:#fff9c4,stroke:#f9a825,stroke-width:2px
+    style Context fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    style Generation fill:#e0f2f1,stroke:#00897b,stroke-width:2px
+    style Response fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+
 ```
 
 ### Key Architectural Features
