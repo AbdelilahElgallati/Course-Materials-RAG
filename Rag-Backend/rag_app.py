@@ -48,6 +48,7 @@ os.makedirs(COURSES_DIR, exist_ok=True)
 
 # Improved embedding model (better for multilingual, including French)
 EMBEDDING_MODEL = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
 # -----------------------------
 # YOUTUBE TRANSCRIPT - ENHANCED
@@ -416,7 +417,7 @@ def main():
     print("🔌 Connecting to Groq...")
     llm = ChatGroq(
         temperature=0,
-        model_name="llama-3.3-70b-versatile",
+        model=GROQ_MODEL,
         max_tokens=2048
     )
     

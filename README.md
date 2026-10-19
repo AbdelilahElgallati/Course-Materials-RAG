@@ -71,7 +71,7 @@ The system implements a sophisticated RAG architecture with the following compon
                         │
                         ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│              GENERATION (Groq LLM - Llama 3.3 70B)              │
+│              GENERATION (Groq LLM - GPT-OSS 120B)              │
 ├─────────────────────────────────────────────────────────────────┤
 │  • Expert educational assistant prompt                          │
 │  • Context-aware answer generation                              │
@@ -169,7 +169,7 @@ The `HybridRetriever` class implements a sophisticated two-stage retrieval:
 - **FastAPI** - Modern, fast web framework for building APIs
 - **LangChain** - Framework for developing LLM applications
 - **FAISS** - Facebook AI Similarity Search for vector storage
-- **Groq** - Ultra-fast LLM inference (Llama 3.3 70B)
+- **Groq** - Ultra-fast LLM inference (GPT-OSS 120B)
 - **Sentence Transformers** - Multilingual embedding models
 - **PyTorch** - Deep learning framework (for embeddings)
 - **yt-dlp** - YouTube content extraction
@@ -183,7 +183,7 @@ The `HybridRetriever` class implements a sophisticated two-stage retrieval:
 
 ### AI/ML Models
 - **Embedding Model**: `paraphrase-multilingual-mpnet-base-v2` (768 dimensions)
-- **LLM**: Groq Llama 3.3 70B Versatile
+- **LLM**: Groq GPT-OSS 120B
 - **Vector Database**: FAISS (Facebook AI Similarity Search)
 
 ## 📦 Installation
@@ -216,6 +216,7 @@ The `HybridRetriever` class implements a sophisticated two-stage retrieval:
    Create a `.env` file in the `Rag-Backend` directory:
    ```env
    GROQ_API_KEY=your_groq_api_key_here
+   GROQ_MODEL=openai/gpt-oss-120b
    ```
 
    Get your Groq API key from [console.groq.com](https://console.groq.com)
@@ -246,6 +247,26 @@ The `HybridRetriever` class implements a sophisticated two-stage retrieval:
    ```
 
    The frontend will be available at `http://localhost:5173`
+
+### Portfolio Capture
+
+The frontend includes a lightweight capture script that uses representative local API data, so screenshots and video can be created without exposing API credentials:
+
+```powershell
+cd client
+npx playwright install ffmpeg
+$env:CHROME_PATH="C:\Program Files\Google\Chrome\Application\chrome.exe"
+npm run dev -- --host 127.0.0.1 --port 5173
+```
+
+In another terminal:
+
+```powershell
+cd client
+npm run capture:demo
+```
+
+The generated files are saved in `portfolio-assets/`.
 
 ## 🚀 Usage
 
@@ -350,7 +371,7 @@ Modify LLM settings in `api.py`:
 ```python
 llm = ChatGroq(
     temperature=0,              # Lower = more deterministic
-    model_name="llama-3.3-70b-versatile",
+    model=os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
     max_tokens=2048
 )
 ```

@@ -5,6 +5,7 @@ import {
   Loader2, Send, X, Bot, User 
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
@@ -461,12 +462,32 @@ function App() {
                               ) : (
                                 <div className="text-sm markdown-body prose prose-sm max-w-none">
                                   <ReactMarkdown 
-                                    remarkPlugins={[remarkMath]} 
+                                    remarkPlugins={[remarkGfm, remarkMath]}
                                     rehypePlugins={[rehypeKatex]}
                                     components={{
                                       a: ({node, ...props}) => (
                                         <a {...props} target="_blank" rel="noopener noreferrer" className="text-indigo-600 underline" />
-                                      )
+                                      ),
+                                      table: ({ node, ...props }) => {
+                                        if (!node) return null;
+                                        return (
+                                          <div className="markdown-table-wrapper">
+                                            <table {...props} />
+                                          </div>
+                                        );
+                                      },
+                                      thead: ({ node, ...props }) => {
+                                        void node;
+                                        return <thead {...props} className="bg-indigo-50" />;
+                                      },
+                                      th: ({ node, ...props }) => {
+                                        void node;
+                                        return <th {...props} className="px-3 py-2 text-left font-semibold text-indigo-900" />;
+                                      },
+                                      td: ({ node, ...props }) => {
+                                        void node;
+                                        return <td {...props} className="px-3 py-2 align-top text-gray-700" />;
+                                      }
                                     }}
                                   >
                                     {msg.content}

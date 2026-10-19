@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "capture:demo": "node scripts/capture-demo.mjs"
   },
   "dependencies": {
     "katex": "^0.16.27",
@@ -16,6 +17,7 @@
     "react-dom": "^19.2.0",
     "react-markdown": "^10.1.0",
     "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0"
   },
   "devDependencies": {
@@ -36,6 +38,7 @@
     "tailwindcss": "^4.1.18",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
+    "playwright": "^1.56.1",
     "vite": "^7.2.4"
   }
 }

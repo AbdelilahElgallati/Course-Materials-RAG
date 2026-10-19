@@ -1,18 +1,24 @@
 {
   "courses": {
-    "machine_learning_course": {
-      "name": "machine learning course",
-      "description": "the course of my university",
+    "ml_course": {
+      "name": "ML Course",
+      "description": "My Machine Learning course",
       "category": "Computer Science",
       "materials": [
         {
-          "path": "https://youtu.be/i_LwzRVP7bg",
+          "path": "https://youtu.be/i_LwzRVP7bg?si=pm4Ez4uKshX0ioGp",
           "type": "video",
-          "title": "https://youtu.be/i_LwzRVP7bg",
-          "added_at": "2025-12-19T15:04:03.223278"
+          "title": "Machine Learning for Everybody",
+          "added_at": "2026-10-19T17:34:22.177856"
+        },
+        {
+          "path": "courses\\ml_course\\RNA-1.pdf",
+          "type": "pdf",
+          "title": "RNA-1.pdf",
+          "added_at": "2026-10-19T17:34:45.683690"
         }
       ],
-      "created_at": "2025-12-19T15:02:26.675771"
+      "created_at": "2026-10-19T17:32:32.230845"
     }
   }
 }

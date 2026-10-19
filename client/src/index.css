@@ -1,3 +1,38 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+.markdown-body {
+  color: #1f2937;
+  line-height: 1.65;
+}
+
+.markdown-body table {
+  width: 100%;
+  min-width: 620px;
+  margin: 0;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.markdown-table-wrapper {
+  margin: 1rem 0;
+  overflow-x: auto;
+  border: 1px solid #c7d2fe;
+  border-radius: 0.75rem;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid #e0e7ff;
+}
+
+.markdown-body tbody tr:nth-child(even) {
+  background: #f8faff;
+}
+
+.markdown-body tbody tr:hover {
+  background: #eef2ff;
+}

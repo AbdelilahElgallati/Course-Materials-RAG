@@ -59,6 +59,7 @@ DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 # Use multilingual embeddings
 EMBEDDING_MODEL = "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
 
 os.makedirs(COURSES_DIR, exist_ok=True)
 
@@ -388,10 +389,10 @@ async def lifespan(app: FastAPI):
     try:
         llm = ChatGroq(
             temperature=0,
-            model_name="llama-3.3-70b-versatile",
+            model=GROQ_MODEL,
             max_tokens=2048
         )
-        print("✅ LLM connected")
+        print(f"✅ LLM connected: {GROQ_MODEL}")
     except Exception as e:
         print(f"❌ LLM connection failed: {e}")
         llm = None
@@ -668,7 +669,7 @@ async def query_materials(request: QueryRequest):
     if llm is None:
         raise HTTPException(
             status_code=503,
-            detail="LLM not connected. Check GROQ_API_KEY environment variable."
+            detail="LLM not connected. Check GROQ_API_KEY and GROQ_MODEL environment variables."
         )
     
     try:
