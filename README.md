@@ -12,81 +12,27 @@ Course Materials RAG transforms static educational content into an interactive, 
 
 The system implements a sophisticated RAG architecture with the following components:
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        DOCUMENT INGESTION                        │
-├─────────────────────────────────────────────────────────────────┤
-│  PDF Files  │  Text Files  │  YouTube Videos (Transcripts)      │
-│  (PyPDF)    │  (TextLoader)│  (yt-dlp)                          │
-└─────────────┴──────────────┴────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      DOCUMENT PROCESSING                         │
-├─────────────────────────────────────────────────────────────────┤
-│  • RecursiveCharacterTextSplitter (800 chars, 150 overlap)      │
-│  • Metadata enrichment (course_id, title, type, source)         │
-│  • Chunk deduplication                                          │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      VECTOR EMBEDDING                            │
-├─────────────────────────────────────────────────────────────────┤
-│  Model: paraphrase-multilingual-mpnet-base-v2                   │
-│  • Multilingual support (English, French, etc.)                 │
-│  • 768-dimensional vectors                                      │
-│  • GPU acceleration (CUDA) when available                       │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    VECTOR STORAGE (FAISS)                        │
-├─────────────────────────────────────────────────────────────────┤
-│  • Fast similarity search                                       │
-│  • Course-based filtering                                       │
-│  • Persistent index on disk                                     │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                    QUERY PROCESSING                              │
-├─────────────────────────────────────────────────────────────────┤
-│  1. Query Embedding                                             │
-│  2. Hybrid Retrieval:                                           │
-│     • Semantic similarity search (k*2 candidates)               │
-│     • Max Marginal Relevance (MMR) for diversity                │
-│     • Course-aware filtering with fallback                      │
-│  3. Top-k document retrieval                                    │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                  CONTEXT AUGMENTATION                            │
-├─────────────────────────────────────────────────────────────────┤
-│  • Combine top retrieved chunks                                 │
-│  • Format with metadata (titles, sources)                       │
-│  • Build structured context for LLM                             │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│              GENERATION (Groq LLM - GPT-OSS 120B)              │
-├─────────────────────────────────────────────────────────────────┤
-│  • Expert educational assistant prompt                          │
-│  • Context-aware answer generation                              │
-│  • Source citation and references                               │
-│  • Markdown + LaTeX support                                     │
-└─────────────────────────────────────────────────────────────────┘
-                        │
-                        ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      RESPONSE DELIVERY                           │
-├─────────────────────────────────────────────────────────────────┤
-│  • Formatted answer with sources                                │
-│  • Processing metrics (time, chunks used)                       │
-│  • Interactive chat interface                                   │
-└─────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TB
+    A["📥 DOCUMENT INGESTION<br/>PDF • Text • YouTube"]
+    B["⚙️ DOCUMENT PROCESSING<br/>Split • Enrich • Deduplicate"]
+    C["🧠 VECTOR EMBEDDING<br/>768-dim Multilingual Model"]
+    D["💾 VECTOR STORAGE<br/>FAISS Index"]
+    E["🔍 QUERY PROCESSING<br/>Hybrid Retrieval + MMR"]
+    F["📚 CONTEXT AUGMENTATION<br/>Combine & Format Chunks"]
+    G["✨ ANSWER GENERATION<br/>Groq Llama 3.3 70B"]
+    H["📤 RESPONSE DELIVERY<br/>Answer + Sources + Metrics"]
+
+    A --> B --> C --> D --> E --> F --> G --> H
+
+    style A fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    style B fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+    style C fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    style D fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
+    style E fill:#fff9c4,stroke:#f9a825,stroke-width:3px
+    style F fill:#fce4ec,stroke:#c2185b,stroke-width:3px
+    style G fill:#e0f2f1,stroke:#00897b,stroke-width:3px
+    style H fill:#f1f8e9,stroke:#689f38,stroke-width:3px
 ```
 
 ### Key Architectural Features
